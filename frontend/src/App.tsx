@@ -1,156 +1,188 @@
-import { useState } from 'react';
-import { Plus, Trash2, ChevronRight } from 'lucide-react';
-
-type Status = 'todo' | 'in-progress' | 'done';
-
-interface Task {
-  id: number;
-  title: string;
-  status: Status;
-}
-
-const STATUS_ORDER: Status[] = ['todo', 'in-progress', 'done'];
-
-const STATUS_LABELS: Record<Status, string> = {
-  'todo': 'To Do',
-  'in-progress': 'In Progress',
-  'done': 'Done',
-};
-
-const STATUS_STYLES: Record<Status, string> = {
-  'todo': 'bg-slate-100 text-slate-600',
-  'in-progress': 'bg-amber-100 text-amber-700',
-  'done': 'bg-emerald-100 text-emerald-700',
-};
-
-const STATUS_DOT: Record<Status, string> = {
-  'todo': 'bg-slate-400',
-  'in-progress': 'bg-amber-500',
-  'done': 'bg-emerald-500',
-};
+import { useState } from "react";
 
 export default function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: 'Review project requirements', status: 'done' },
-    { id: 2, title: 'Design wireframes', status: 'in-progress' },
-    { id: 3, title: 'Implement authentication', status: 'todo' },
-  ]);
-  const [input, setInput] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState<string[]>([]);
+
+  const handleLogin = async () => {
+    if (!email || !password) return alert("Enter email & password");
+
+    const res = await fetch("http://localhost:3002/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+    if (data.token) setIsLoggedIn(true);
+    else alert(data);
+  };
 
   const addTask = () => {
-    const trimmed = input.trim();
-    if (!trimmed) return;
-    setTasks(prev => [
-      ...prev,
-      { id: Date.now(), title: trimmed, status: 'todo' },
-    ]);
-    setInput('');
+    if (!task) return;
+    setTasks([...tasks, task]);
+    setTask("");
   };
 
-  const advanceStatus = (id: number) => {
-    setTasks(prev =>
-      prev.map(task => {
-        if (task.id !== id) return task;
-        const idx = STATUS_ORDER.indexOf(task.status);
-        const next = STATUS_ORDER[Math.min(idx + 1, STATUS_ORDER.length - 1)];
-        return { ...task, status: next };
-      })
+  // 🔐 LOGIN
+  if (!isLoggedIn) {
+    return (
+      <div style={bg}>
+        <div style={blob1}></div>
+        <div style={blob2}></div>
+
+        <div style={glass}>
+          <h2 style={title}>✨ TaskFlow</h2>
+
+          <div style={inputBox}>
+            <span>📧</span>
+            <input
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={input}
+            />
+          </div>
+
+          <div style={inputBox}>
+            <span>🔒</span>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={input}
+            />
+          </div>
+
+          <button onClick={handleLogin} style={btn}>
+            Login →
+          </button>
+        </div>
+      </div>
     );
-  };
+  }
 
-  const deleteTask = (id: number) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
-  };
-
-  const counts = STATUS_ORDER.reduce((acc, s) => {
-    acc[s] = tasks.filter(t => t.status === s).length;
-    return acc;
-  }, {} as Record<Status, number>);
-
+  // 🟢 MAIN
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-16 px-4">
-      <div className="w-full max-w-lg">
+    <div style={bg}>
+      <div style={blob1}></div>
+      <div style={blob2}></div>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Task Manager</h1>
-          <p className="text-gray-500 mt-1 text-sm">
-            {tasks.length === 0
-              ? 'No tasks yet. Add one below.'
-              : `${tasks.length} task${tasks.length !== 1 ? 's' : ''} total`}
-          </p>
-        </div>
+      <div style={glass}>
+        <h2 style={title}>✨ TaskFlow</h2>
 
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          {STATUS_ORDER.map(s => (
-            <div key={s} className="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
-              <div className={`text-2xl font-bold ${s === 'done' ? 'text-emerald-600' : s === 'in-progress' ? 'text-amber-600' : 'text-slate-600'}`}>
-                {counts[s]}
-              </div>
-              <div className="text-xs text-gray-500 mt-0.5 font-medium">{STATUS_LABELS[s]}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex gap-2 mb-6">
+        <div style={{ display: "flex", gap: 10 }}>
           <input
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && addTask()}
-            placeholder="Add a new task..."
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+            placeholder="Add a task..."
+            style={input}
           />
-          <button
-            onClick={addTask}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-medium rounded-xl shadow-sm transition-colors"
-          >
-            <Plus size={16} strokeWidth={2.5} />
+          <button onClick={addTask} style={btn}>
             Add
           </button>
         </div>
 
-        <div className="space-y-2">
-          {tasks.length === 0 && (
-            <div className="text-center py-12 text-gray-400 text-sm">
-              No tasks yet. Add your first task above.
-            </div>
-          )}
-          {tasks.map(task => (
-            <div
-              key={task.id}
-              className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm"
-            >
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${STATUS_DOT[task.status]}`} />
-
-              <span className={`flex-1 text-sm font-medium ${task.status === 'done' ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                {task.title}
-              </span>
-
-              <span className={`text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0 ${STATUS_STYLES[task.status]}`}>
-                {STATUS_LABELS[task.status]}
-              </span>
-
-              {task.status !== 'done' && (
-                <button
-                  onClick={() => advanceStatus(task.id)}
-                  title="Advance status"
-                  className="text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              )}
-
-              <button
-                onClick={() => deleteTask(task.id)}
-                title="Delete task"
-                className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0 ml-1"
-              >
-                <Trash2 size={15} />
-              </button>
-            </div>
+        <ul style={{ marginTop: 20 }}>
+          {tasks.map((t, i) => (
+            <li key={i} style={taskItem}>
+              ✅ {t}
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );
 }
+
+// 🎨 STYLES
+
+const bg = {
+  height: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "linear-gradient(135deg, #667eea, #764ba2)",
+  position: "relative" as const,
+  overflow: "hidden",
+};
+
+const glass = {
+  background: "rgba(255,255,255,0.1)",
+  backdropFilter: "blur(20px)",
+  padding: 30,
+  borderRadius: 20,
+  width: 350,
+  boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+  color: "white",
+  zIndex: 2,
+};
+
+const title = {
+  textAlign: "center" as const,
+  marginBottom: 20,
+};
+
+const inputBox = {
+  display: "flex",
+  alignItems: "center",
+  background: "rgba(255,255,255,0.2)",
+  padding: "8px 10px",
+  borderRadius: 10,
+  marginBottom: 10,
+};
+
+const input = {
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  color: "white",
+  marginLeft: 8,
+  width: "100%",
+};
+
+const btn = {
+  width: "100%",
+  padding: 10,
+  background: "linear-gradient(to right, #ff7e5f, #feb47b)",
+  border: "none",
+  borderRadius: 10,
+  color: "white",
+  cursor: "pointer",
+  marginTop: 10,
+  transition: "0.3s",
+};
+
+const taskItem = {
+  listStyle: "none",
+  padding: 10,
+  borderBottom: "1px solid rgba(255,255,255,0.3)",
+};
+
+// 🎨 BACKGROUND BLOBS
+
+const blob1 = {
+  position: "absolute" as const,
+  width: 200,
+  height: 200,
+  background: "#ff7e5f",
+  borderRadius: "50%",
+  top: 50,
+  left: 50,
+  filter: "blur(100px)",
+};
+
+const blob2 = {
+  position: "absolute" as const,
+  width: 200,
+  height: 200,
+  background: "#764ba2",
+  borderRadius: "50%",
+  bottom: 50,
+  right: 50,
+  filter: "blur(100px)",
+};

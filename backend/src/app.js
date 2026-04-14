@@ -1,85 +1,57 @@
-import express from 'express';
-import cors from 'cors';
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
-const PORT = 3001;
-
 app.use(cors());
 app.use(express.json());
 
 let tasks = [
-  { id: 1, title: 'Review project requirements', status: 'done' },
-  { id: 2, title: 'Design wireframes', status: 'in-progress' },
-  { id: 3, title: 'Implement authentication', status: 'todo' },
+  { id: 1, title: "Review project requirements", status: "done" },
+  { id: 2, title: "Design wireframes", status: "in-progress" },
+  { id: 3, title: "Implement authentication", status: "todo" }
 ];
 
 let nextId = 4;
 
-app.get('/tasks', (req, res) => {
+// GET
+app.get("/tasks", (req, res) => {
   res.json(tasks);
 });
 
-app.post('/tasks', (req, res) => {
-  const { title, status = 'todo' } = req.body;
+// POST
+app.post("/tasks", (req, res) => {
+  const { title, status = "todo" } = req.body;
 
-  if (!title || typeof title !== 'string' || title.trim() === '') {
-    return res.status(400).json({ error: 'Title is required and must be a non-empty string' });
+  if (!title) {
+    return res.status(400).json({ error: "Title required" });
   }
 
-  const validStatuses = ['todo', 'in-progress', 'done'];
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({ error: 'Status must be one of: todo, in-progress, done' });
-  }
-
-  const newTask = {
-    id: nextId++,
-    title: title.trim(),
-    status,
-  };
-
+  const newTask = { id: nextId++, title, status };
   tasks.push(newTask);
-  res.status(201).json(newTask);
+
+  res.json(newTask);
 });
 
-app.put('/tasks/:id', (req, res) => {
-  const taskId = parseInt(req.params.id, 10);
-  const { status, title } = req.body;
+// DELETE
+app.delete("/tasks/:id", (req, res) => {
+  const id = parseInt(req.params.id);
 
-  const task = tasks.find(t => t.id === taskId);
-  if (!task) {
-    return res.status(404).json({ error: 'Task not found' });
-  }
+  tasks = tasks.filter(t => t.id !== id);
 
-  if (status) {
-    const validStatuses = ['todo', 'in-progress', 'done'];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ error: 'Status must be one of: todo, in-progress, done' });
-    }
-    task.status = status;
-  }
-
-  if (title !== undefined) {
-    if (typeof title !== 'string' || title.trim() === '') {
-      return res.status(400).json({ error: 'Title must be a non-empty string' });
-    }
-    task.title = title.trim();
-  }
-
-  res.json(task);
+  res.json({ success: true });
 });
 
-app.delete('/tasks/:id', (req, res) => {
-  const taskId = parseInt(req.params.id, 10);
+// PUT
+app.put("/tasks/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const updated = req.body;
 
-  const taskIndex = tasks.findIndex(t => t.id === taskId);
-  if (taskIndex === -1) {
-    return res.status(404).json({ error: 'Task not found' });
-  }
+  tasks = tasks.map(t => (t.id === id ? updated : t));
 
-  const deletedTask = tasks.splice(taskIndex, 1);
-  res.json(deletedTask[0]);
+  res.json(updated);
 });
 
-app.listen(PORT, () => {
-  console.log(`Task Manager API running on http://localhost:${PORT}`);
+app.listen(3001, () => {
+  console.log("🔥 Server running on http://localhost:3001");
 });
+process.stdin.resume();
