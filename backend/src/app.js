@@ -1,57 +1,86 @@
 const express = require("express");
 const cors = require("cors");
+const { Pool } = require("pg");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-let tasks = [
-  { id: 1, title: "Review project requirements", status: "done" },
-  { id: 2, title: "Design wireframes", status: "in-progress" },
-  { id: 3, title: "Implement authentication", status: "todo" }
-];
-
-let nextId = 4;
-
-// GET
-app.get("/tasks", (req, res) => {
-  res.json(tasks);
+// PostgreSQL connection (Docker wala)
+const pool = new Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "taskflow",
+  password: "postgres",
+  port: 5432,
 });
 
-// POST
-app.post("/tasks", (req, res) => {
-  const { title, status = "todo" } = req.body;
+// SIGNUP
+app.post("/signup", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  if (!title) {
-    return res.status(400).json({ error: "Title required" });
+    const userExists = await pool.query(
+      "SELECT * FROM users WHERE email=$1",
+      [email]
+    );
+
+    if (userExists.rows.length > 0) {
+      return res.status(400).json("User already exists");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      "INSERT INTO users (email, password) VALUES ($1, $2)",
+      [email, hashedPassword]
+    );
+
+    res.json("Signup successful");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Error");
   }
-
-  const newTask = { id: nextId++, title, status };
-  tasks.push(newTask);
-
-  res.json(newTask);
 });
 
-// DELETE
-app.delete("/tasks/:id", (req, res) => {
-  const id = parseInt(req.params.id);
+// LOGIN
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  tasks = tasks.filter(t => t.id !== id);
+    const user = await pool.query(
+      "SELECT * FROM users WHERE email=$1",
+      [email]
+    );
 
-  res.json({ success: true });
-});
+    if (user.rows.length === 0) {
+      return res.status(400).json("User not found");
+    }
 
-// PUT
-app.put("/tasks/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const updated = req.body;
+    const valid = await bcrypt.compare(
+      password,
+      user.rows[0].password
+    );
 
-  tasks = tasks.map(t => (t.id === id ? updated : t));
+    if (!valid) {
+      return res.status(400).json("Wrong password");
+    }
 
-  res.json(updated);
+    const token = jwt.sign(
+      { email },
+      "secretkey",
+      { expiresIn: "1h" }
+    );
+
+    res.json({ token });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Login error");
+  }
 });
 
 app.listen(3001, () => {
   console.log("🔥 Server running on http://localhost:3001");
 });
-process.stdin.resume();

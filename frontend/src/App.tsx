@@ -10,7 +10,7 @@ export default function App() {
   const handleLogin = async () => {
     if (!email || !password) return alert("Enter email & password");
 
-    const res = await fetch("http://localhost:3002/login", {
+    const res = await fetch("http://localhost:3001/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
