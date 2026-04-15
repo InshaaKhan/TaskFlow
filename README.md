@@ -1,13 +1,12 @@
-🚀 TaskFlow – Full Stack Task Management App
+🚀 TaskFlow - Task Management App
 
-TaskFlow is a simple full-stack web application that helps users manage their daily tasks efficiently.
-It provides a clean UI and backend APIs to create, view, update, and delete tasks.
+A full-stack task management application where users can create, view, update, and delete tasks efficiently.
 
 ---
 
 ✨ Features
 
-- 📝 Add new tasks
+- ➕ Add new tasks
 - 📋 View all tasks
 - ✏️ Update existing tasks
 - ❌ Delete tasks
@@ -16,7 +15,7 @@ It provides a clean UI and backend APIs to create, view, update, and delete task
 
 ---
 
-🏗️ Project Structure
+📁 Project Structure
 
 TaskFlow/
 │
@@ -43,7 +42,7 @@ TaskFlow/
 
 ---
 
-🛠️ Tech Stack
+🛠 Tech Stack
 
 Backend
 
@@ -60,61 +59,37 @@ Frontend
 
 ⚙️ Setup Instructions
 
-1️⃣ Clone Repository
+1. Clone Repository
 
 git clone https://github.com/InshaaKhan/TaskFlow.git
 cd TaskFlow
 
 ---
 
-2️⃣ Backend Setup
+2. Backend Setup
 
 cd backend
 npm install
 npm start
 
-Backend will run on:
-
-http://localhost:5000
-
 ---
 
-3️⃣ Frontend Setup
+3. Frontend Setup
 
 cd frontend
 npm install
 npm run dev
 
-Frontend will run on:
-
-http://localhost:5173
-
 ---
 
-🌐 API Endpoints
+📌 Future Improvements
 
-- GET "/tasks" → Get all tasks
-- POST "/tasks" → Create task
-- PUT "/tasks/:id" → Update task
-- DELETE "/tasks/:id" → Delete task
-
----
-
-🚀 Future Improvements
-
-- 🔐 User authentication
-- 📱 Better UI/UX
+- 🔐 User Authentication
+- 🔍 Task filtering & search
 - ☁️ Deployment (Vercel / Render)
-- 📊 Task filtering & search
 
 ---
 
 👩‍💻 Author
 
 Insha Khan
-
----
-
-⭐ Support
-
-If you like this project, give it a ⭐ on GitHub!
