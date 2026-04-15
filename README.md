@@ -1,22 +1,23 @@
-🚀 TaskFlow - Task Management App
+# 🚀 TaskFlow – Full Stack Task Management App
 
-A full-stack task management application where users can create, view, update, and delete tasks efficiently.
-
----
-
-✨ Features
-
-- ➕ Add new tasks
-- 📋 View all tasks
-- ✏️ Update existing tasks
-- ❌ Delete tasks
-- ⚡ Fast and responsive UI
-- 🔗 Backend API integration
+TaskFlow is a modern full-stack web application designed to help users efficiently manage their daily tasks. It provides a clean and responsive user interface along with powerful backend APIs for seamless task operations.
 
 ---
 
-📁 Project Structure
+## ✨ Features
 
+- 📝 Create new tasks  
+- 📋 View all tasks  
+- ✏️ Update existing tasks  
+- ❌ Delete tasks  
+- ⚡ Fast and responsive UI  
+- 🔗 RESTful API integration  
+
+---
+
+## 🏗️ Project Structure
+
+```bash
 TaskFlow/
 │
 ├── backend/
@@ -39,57 +40,87 @@ TaskFlow/
 ├── package.json
 ├── package-lock.json
 └── .gitignore
+```
 
 ---
 
-🛠 Tech Stack
+## 🛠️ Tech Stack
 
-Backend
+### 🔹 Backend
+- Node.js  
+- Express.js  
 
-- Node.js
-- Express.js
-
-Frontend
-
-- React (Vite)
-- TypeScript
-- CSS
+### 🔹 Frontend
+- React (Vite)  
+- TypeScript  
+- CSS  
 
 ---
 
-⚙️ Setup Instructions
+## ⚙️ Setup Instructions
 
-1. Clone Repository
+### 1️⃣ Clone the Repository
 
+```bash
 git clone https://github.com/InshaaKhan/TaskFlow.git
 cd TaskFlow
+```
 
 ---
 
-2. Backend Setup
+### 2️⃣ Backend Setup
 
+```bash
 cd backend
 npm install
 npm start
+```
+
+Backend will run on:  
+http://localhost:5000  
 
 ---
 
-3. Frontend Setup
+### 3️⃣ Frontend Setup
 
+```bash
 cd frontend
 npm install
 npm run dev
+```
+
+Frontend will run on:  
+http://localhost:5173  
 
 ---
 
-📌 Future Improvements
+## 🌐 API Endpoints
 
-- 🔐 User Authentication
-- 🔍 Task filtering & search
-- ☁️ Deployment (Vercel / Render)
+| Method | Endpoint     | Description       |
+|--------|-------------|------------------|
+| GET    | /tasks      | Get all tasks    |
+| POST   | /tasks      | Create a task    |
+| PUT    | /tasks/:id  | Update a task    |
+| DELETE | /tasks/:id  | Delete a task    |
 
 ---
 
-👩‍💻 Author
+## 🚀 Future Improvements
 
-Insha Khan
+- 🔐 User Authentication (JWT)  
+- 📱 Improved UI/UX  
+- ☁️ Deployment (Vercel / Render)  
+- 🔍 Task filtering & search  
+- 📊 Dashboard analytics  
+
+---
+
+## 👩‍💻 Author
+
+Insha Khan  
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
